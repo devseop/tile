@@ -16,7 +16,7 @@ const XO = 43;           // 기준점 X좌표(GRID)
 const YO = 136;          // 기준점 Y좌표(GRID)
 
 // 사용자 위치 가져오기
-const getGeoLocation = (): Promise<GeolocationPosition> => {
+export const getGeoLocation = (): Promise<GeolocationPosition> => {
   return new Promise((resolve, reject) => {
     if (!navigator.geolocation) {
       return reject(new Error('failed get geolocation'))
@@ -30,7 +30,9 @@ const getGeoLocation = (): Promise<GeolocationPosition> => {
   })
 }
 
-const dfsXYConv = (code: 'toXY' | 'toLL', v1: number, v2: number): DfsResult => {
+// 그리드 좌표 얻기
+// https://gist.github.com/fronteer-kr/14d7f779d52a21ac2f16
+export const dfsXYConv = (code: 'toXY' | 'toLL', v1: number, v2: number): DfsResult => {
   const DEGRAD = Math.PI / 180;
   const RADDEG = 180 / Math.PI;
 
@@ -106,6 +108,7 @@ const dfsXYConv = (code: 'toXY' | 'toLL', v1: number, v2: number): DfsResult => 
   return result;
 }
 
+// 격자 좌표로 변환하기
 export const getUserXYCoords = async (): Promise<{x: number, y: number}> => {
   try {
     const { coords } = await getGeoLocation();
@@ -117,9 +120,43 @@ export const getUserXYCoords = async (): Promise<{x: number, y: number}> => {
     }
 
     return { x, y };
-    
+
   } catch (err) {
     console.error('위치 정보 얻기 실패:', err);
     throw err;
   }
+}
+
+// 사용자 위치를 지역명으로 변환하기
+export const getDistrictName = async (lat: number, lng: number): Promise<string> => {
+  const url = new URL('https://dapi.kakao.com/v2/local/geo/coord2address.json')
+
+  url.searchParams.set('x', lng.toString()); // 경도
+  url.searchParams.set('y', lat.toString()); // 위도
+
+  const res = await fetch(url.toString(), {
+    headers: {
+      Authorization: `KakaoAK ${import.meta.env.VITE_KAKAO_REST_KEY}`,
+    },
+  })
+
+  if (!res.ok) {
+    throw new Error('kakao api err')
+  }
+
+  const { documents } = (await res.json()) as {
+    documents: Array<{
+      address: {
+        region_1depth_name: string; 
+        region_2depth_name: string;
+      };
+    }>;
+  };
+
+  if (documents.length === 0) {
+    throw new Error('주소 정보를 찾을 수 없습니다.');
+  }
+
+  const { region_1depth_name, region_2depth_name } = documents[0].address;
+  return `${region_1depth_name} ${region_2depth_name}`;
 }
