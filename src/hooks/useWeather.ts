@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { getCurrentLocationWeather } from '../api/weatherAPI';
+import { getCurrentLocationWeather, getYesterdayLocationWeather } from '../api/weatherAPI';
 import { getGeoLocation, getDistrictName } from '../utils/location';
 
 export const useWeather = () => {
@@ -8,6 +8,13 @@ export const useWeather = () => {
     queryFn: getCurrentLocationWeather,
   });
 };
+
+export const useYesterdayWeather = () => {
+  return useQuery({
+    queryKey: ['yesterday'],
+    queryFn: getYesterdayLocationWeather
+  })
+}
 
 export const useDistrict = () => {
   return useQuery({

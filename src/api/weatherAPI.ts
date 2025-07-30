@@ -78,3 +78,45 @@ export const getCurrentLocationWeather = async () => {
     );
   }
 };
+
+export const getYesterdayLocationWeather = async () => {
+  const { x: nx, y: ny } = await getUserXYCoords();
+
+  // 현재 시각 기준 정확히 24시간 전 (정각)
+  const target = dayjs().subtract(24, 'hour').minute(0).second(0).millisecond(0);
+  const base_date = target.format("YYYYMMDD");
+  const base_time = target.format("HHmm");
+
+  const params = {
+    ...DEFAULT_WEATHER_PARAMS,
+    serviceKey: import.meta.env.VITE_WEATHER_API_SERVICE_KEY,
+    base_date,
+    base_time,
+    nx,
+    ny
+  };
+
+  const queryString = Object.entries(params)
+    .map(([key, value]) => `${key}=${value}`)
+    .join('&');
+  const API_ENDPOINT = `${WEATHER_API_BASE_URL}?${queryString}`;
+
+  const response = await fetch(API_ENDPOINT);
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  const data = await response.json();
+
+  if (data.response?.header?.resultCode === "00") {
+    const items = data.response.body.items.item;
+    const result = parseWeatherData(items);
+    return result;
+  } else {
+    throw new Error(
+      data.response?.header?.resultMsg ||
+      "어제 동일 시각의 실황 데이터를 가져오는데 실패했습니다."
+    );
+  }
+};
