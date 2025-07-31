@@ -8,14 +8,5 @@ if (!admin.apps.length) {
 }
 
 const db = admin.firestore();
-const FieldValue = admin.firestore.FieldValue;
 
-if (process.env.FUNCTIONS_EMULATOR === 'true') {
-  db.settings({
-    host: 'localhost:8080',
-    ssl: false,
-  });
-}
-
-
-export { admin, db, FieldValue };
+export { db }

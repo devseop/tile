@@ -1,19 +1,23 @@
 import * as functions from 'firebase-functions/v1'
-import { db, FieldValue } from '../../libs/firebase-admin';
+import { db } from '../../libs/firebase-admin';
+import { FieldValue } from 'firebase-admin/firestore';
 import { WeatherService } from './weather.sevices';
+import { corsHandler } from '../../libs/cors';
+
 
 const WEATHER_API_SERVICE_KEY = "YAORAgNpQ5Vh9JaRAvZnpyIkSbbR8RzyMo6fk7WluflGbC5tZ9LzW%2FLKhDhn8RnAedh8ThJtacrrlHWJo2wOWA%3D%3D";
 
-export const registerLocation = functions.https.onRequest(async (req, res) => {
-  if (req.method !== "POST") {
-    res.sendStatus(405);
-    return;
-  }
+export const registerLocation = functions.https.onRequest((req, res) => {
+  corsHandler(req, res, () => {
+    if (req.method !== "POST") {
+      res.sendStatus(405);
+      return;
+    }
 
-  try {
     const { city, district, nx, ny, displayName } = req.body;
+
     const hasMissingLocationInfo =
-      !city || !district || !nx || !ny || !displayName; 
+      !city || !district || !nx || !ny || !displayName;
 
     if (hasMissingLocationInfo) {
       res.status(400).json({ error: "필수 필드 누락" });
@@ -25,19 +29,20 @@ export const registerLocation = functions.https.onRequest(async (req, res) => {
       .collection("districts")
       .doc(district);
 
-    await ref.set({
+    ref.set({
       nx,
       ny,
       displayName,
-      createdAt: FieldValue.serverTimestamp(), 
-    });
-
-    res.sendStatus(200);
-    return;
-  } catch (err) {
-    console.error("❌ registerLocation 에러:", err);
-    res.status(500).json({ error: "서버 오류" });
-  }
+      createdAt: FieldValue.serverTimestamp(),
+    })
+      .then(() => {
+        res.sendStatus(200);
+      })
+      .catch((err) => {
+        console.error("❌ registerLocation 에러:", err);
+        res.status(500).json({ error: "서버 오류" });
+      });
+  });
 });
 
 export const handleHourlyWeatherCollection = async () => {
@@ -68,8 +73,8 @@ export const handleHourlyWeatherCollection = async () => {
         .set({
           temperature,
           base_date,
-          base_time,
-          createdAt: FieldValue.serverTimestamp(), 
+          base_time,        
+          createdAt: FieldValue.serverTimestamp()
         });
 
       console.log(`✅ ${city}/${district} → ${temperature}°C`);
