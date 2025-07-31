@@ -1,3 +1,4 @@
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { WeatherIconDisplay } from './components/WeatherIconDisplay';
 import { WeatherInfoContainer } from './components/WeatherInfoContainer';
@@ -10,10 +11,10 @@ export default function App() {
     <Router>
       <Routes>
         <Route path="/" element={<LocationSelectionPage />} />
-        {/* <Route
+        <Route
           path="/forecast"
-          element={locationId ? <ForecastPage /> : <Navigate to="/" />}
-        /> */}
+          element={locationId ? <WeatherIconDisplay /> : <Navigate to="/" />}
+        />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Router>

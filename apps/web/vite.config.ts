@@ -10,7 +10,7 @@ export default defineConfig({
       '/api': {
         target: 'http://localhost:5001/tile-cd2fe/us-central1',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ''),
+        rewrite: (path) => path.replace(/^\/api/, '/tile-cd2fe/us-central1'),
       }
     }
   }

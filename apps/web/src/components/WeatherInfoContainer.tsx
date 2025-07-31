@@ -1,3 +1,4 @@
+import React from 'react'
 // import { WeatherInfoHead } from './WeatherInfoHead';
 
 export const WeatherInfoContainer = () => {
