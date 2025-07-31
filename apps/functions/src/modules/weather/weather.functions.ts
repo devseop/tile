@@ -5,7 +5,7 @@ import { WeatherService } from './weather.sevices';
 import { corsHandler } from '../../libs/cors';
 
 
-const WEATHER_API_SERVICE_KEY = "YAORAgNpQ5Vh9JaRAvZnpyIkSbbR8RzyMo6fk7WluflGbC5tZ9LzW%2FLKhDhn8RnAedh8ThJtacrrlHWJo2wOWA%3D%3D";
+const WEATHER_API_SERVICE_KEY = process.env.WEATHER_API_SERVICE_KEY;
 
 export const registerLocation = functions.https.onRequest((req, res) => {
   corsHandler(req, res, () => {
@@ -55,7 +55,7 @@ export const handleHourlyWeatherCollection = async () => {
     for (const districtDoc of districtsSnap.docs) {
       const district = districtDoc.id;
       const { nx, ny } = districtDoc.data();
-      const weatherService = new WeatherService(WEATHER_API_SERVICE_KEY);
+      const weatherService = new WeatherService(WEATHER_API_SERVICE_KEY as string);
 
       const result = await weatherService.getLocationTemperature(nx, ny);
       if (!result) continue;
