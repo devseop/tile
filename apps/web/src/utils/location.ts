@@ -160,3 +160,36 @@ export const getDistrictName = async (lat: number, lng: number): Promise<string>
   const { region_1depth_name, region_2depth_name } = documents[0].address;
   return `${region_1depth_name} ${region_2depth_name}`;
 }
+
+export const registerUserLocation = async (districtName: string, id: string) => {
+  const url = new URL("https://dapi.kakao.com/v2/local/search/address.json");
+  url.searchParams.set("query", districtName);
+
+  const res = await fetch(url.toString(), {
+    headers: {
+      Authorization: `KakaoAK ${import.meta.env.VITE_KAKAO_REST_KEY}`,
+    },
+  });
+
+  const { documents } = await res.json();
+  const { x: lng, y: lat } = documents[0];
+
+  const { x, y } = dfsXYConv("toXY", parseFloat(lat), parseFloat(lng));
+  const [city, district] = id.split("_");
+  // const isLocal = import.meta.env.DEV;
+  // const endpoint = isLocal
+  // ? `http://localhost:5001/tile-cd2fe/us-central1/registerLocation`
+  // : `/api/locations`; // 프로덕션에서는 리버스 프록시 또는 백엔드 api 경로
+
+  await fetch('/api/registerLocation', {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      city,
+      district,
+      displayName: districtName,
+      nx: x,
+      ny: y,
+    }),
+  });
+}
