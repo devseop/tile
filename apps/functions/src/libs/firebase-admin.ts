@@ -8,6 +8,7 @@ if (!admin.apps.length) {
 }
 
 const db = admin.firestore();
+const FieldValue = admin.firestore.FieldValue;
 
 if (process.env.FUNCTIONS_EMULATOR === 'true') {
   db.settings({
@@ -16,6 +17,5 @@ if (process.env.FUNCTIONS_EMULATOR === 'true') {
   });
 }
 
-const serverTimestamp = admin.firestore.FieldValue.serverTimestamp;
 
-export { admin, db, serverTimestamp };
+export { admin, db, FieldValue };

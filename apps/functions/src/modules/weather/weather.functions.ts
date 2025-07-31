@@ -1,5 +1,5 @@
 import * as functions from 'firebase-functions/v1'
-import { db, serverTimestamp } from '../../libs/firebase-admin';
+import { db, FieldValue } from '../../libs/firebase-admin';
 import { WeatherService } from './weather.sevices';
 
 const WEATHER_API_SERVICE_KEY = "YAORAgNpQ5Vh9JaRAvZnpyIkSbbR8RzyMo6fk7WluflGbC5tZ9LzW%2FLKhDhn8RnAedh8ThJtacrrlHWJo2wOWA%3D%3D";
@@ -29,7 +29,7 @@ export const registerLocation = functions.https.onRequest(async (req, res) => {
       nx,
       ny,
       displayName,
-      createdAt: serverTimestamp(), 
+      createdAt: FieldValue.serverTimestamp(), 
     });
 
     res.sendStatus(200);
@@ -69,7 +69,7 @@ export const handleHourlyWeatherCollection = async () => {
           temperature,
           base_date,
           base_time,
-          createdAt: serverTimestamp(), 
+          createdAt: FieldValue.serverTimestamp(), 
         });
 
       console.log(`✅ ${city}/${district} → ${temperature}°C`);

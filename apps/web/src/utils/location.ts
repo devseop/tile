@@ -1,3 +1,4 @@
+import { SERVER_BASE_URL } from '../constants/url';
 
 interface DfsResult {
   x?: number;
@@ -176,12 +177,9 @@ export const registerUserLocation = async (districtName: string, id: string) => 
 
   const { x, y } = dfsXYConv("toXY", parseFloat(lat), parseFloat(lng));
   const [city, district] = id.split("_");
-  // const isLocal = import.meta.env.DEV;
-  // const endpoint = isLocal
-  // ? `http://localhost:5001/tile-cd2fe/us-central1/registerLocation`
-  // : `/api/locations`; // 프로덕션에서는 리버스 프록시 또는 백엔드 api 경로
+  const endpoint = import.meta.env.DEV ? SERVER_BASE_URL.dev : SERVER_BASE_URL.prod
 
-  await fetch('/api/registerLocation', {
+  await fetch(`${endpoint}/registerLocation`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
