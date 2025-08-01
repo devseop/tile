@@ -110,17 +110,18 @@ export const dfsXYConv = (code: 'toXY' | 'toLL', v1: number, v2: number): DfsRes
 }
 
 // 격자 좌표로 변환하기
-export const getUserXYCoords = async (): Promise<{x: number, y: number}> => {
+export const getUserXYCoords = async (): Promise<{name: string, x: number, y: number}> => {
   try {
     const { coords } = await getGeoLocation();
     const { latitude: lat, longitude: lng } = coords;
+    const name = await getDistrictName(lat, lng);
     const { x, y } = dfsXYConv('toXY', lat, lng);
 
     if (x == null || y == null) {
       throw new Error('failed dfsXYConv')
     }
 
-    return { x, y };
+    return { name, x, y };
 
   } catch (err) {
     console.error('위치 정보 얻기 실패:', err);
@@ -162,7 +163,7 @@ export const getDistrictName = async (lat: number, lng: number): Promise<string>
   return `${region_1depth_name} ${region_2depth_name}`;
 }
 
-export const registerUserLocation = async (districtName: string, id: string) => {
+export const registerUserLocation = async (districtName: string) => {
   const url = new URL("https://dapi.kakao.com/v2/local/search/address.json");
   url.searchParams.set("query", districtName);
 
@@ -176,15 +177,12 @@ export const registerUserLocation = async (districtName: string, id: string) => 
   const { x: lng, y: lat } = documents[0];
 
   const { x, y } = dfsXYConv("toXY", parseFloat(lat), parseFloat(lng));
-  const [city, district] = id.split("_");
   const endpoint = import.meta.env.DEV ? SERVER_BASE_URL.dev : SERVER_BASE_URL.prod
 
   await fetch(`${endpoint}/registerLocation`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      city,
-      district,
       displayName: districtName,
       nx: x,
       ny: y,

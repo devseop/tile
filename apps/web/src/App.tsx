@@ -1,8 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import { WeatherIconDisplay } from './components/WeatherIconDisplay';
-import { WeatherInfoContainer } from './components/WeatherInfoContainer';
 import { LocationSelectionPage } from './pages/LocationSelectionPage';
+import { ForecastPage } from './pages/ForecastPage';
 
 export default function App() {
   const locationId = localStorage.getItem('user_location');
@@ -13,7 +12,7 @@ export default function App() {
         <Route path="/" element={<LocationSelectionPage />} />
         <Route
           path="/forecast"
-          element={locationId ? <WeatherIconDisplay /> : <Navigate to="/" />}
+          element={locationId ? <ForecastPage /> : <Navigate to="/" />}
         />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>

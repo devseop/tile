@@ -1,12 +1,12 @@
 import React from 'react'
-// import { WeatherInfoHead } from './WeatherInfoHead';
+import { WeatherInfoHead } from './WeatherInfoHead';
 
 export const WeatherInfoContainer = () => {
   
   return (
     <section className='flex-col px-[24px] mt-[24px]'>
         {/* 헤더 */}
-        {/* <WeatherInfoHead /> */}
+        <WeatherInfoHead />
         {/* //! 데이터 업데이트 필요 */}
         {/* 세부정보 */}
         <div className="overflow-x-auto">

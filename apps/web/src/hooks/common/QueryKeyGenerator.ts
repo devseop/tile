@@ -1,3 +1,3 @@
 export default {
-  weather: (args: { city: string; district: string }) => ['weather', args],
+  weather: (args: { nx: number, ny: number }) => ['weather', args],
 };

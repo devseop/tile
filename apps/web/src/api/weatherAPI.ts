@@ -1,15 +1,15 @@
-import { getFirestore, doc, getDoc } from 'firebase/firestore';
+import {db} from '../firebase'
+import { doc, getDoc } from 'firebase/firestore';
 import dayjs from 'dayjs';
 
-const db = getFirestore();
-
-export const getCurrentWeather = async (city: string, district: string) => {
+export const getCurrentWeather = async (nx: number, ny: number) => {
   const hour = dayjs().format('HH');
-  const weatherDocRef = doc(db, 'weather', city, district, 'hourly', hour, 'data');
+  const locationId = `${nx}_${ny}`
+  const weatherDocRef = doc(db, 'weather', locationId, 'hourly', hour);
   const snapshot = await getDoc(weatherDocRef);
 
   if (!snapshot.exists()) {
-    throw new Error(`날씨 데이터를 찾을 수 없습니다: ${city}/${district}/${hour}`);
+    throw new Error(`날씨 데이터를 찾을 수 없습니다: ${locationId}/${hour}`);
   }
 
   return snapshot.data();
