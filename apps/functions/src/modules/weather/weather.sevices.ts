@@ -29,6 +29,7 @@ export class WeatherService {
     });
 
     const url = `${this.baseUrl}?${params.toString()}`;
+    
     try {
       const res = await fetch(url);
       if (!res.ok) throw new Error(`API 호출 실패: ${res.status}`);
