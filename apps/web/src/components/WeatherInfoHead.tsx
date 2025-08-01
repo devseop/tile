@@ -8,6 +8,7 @@ export const WeatherInfoHead = () => {
   const {data, isLoading, isError} = useWeather(nx, ny);
   const title = `오늘은\n어제보다 더워요`
 
+  // console.log('WeatherInfoHead',data)
 
   // if (isLoading) return <main>로딩 중…</main>;
   // if (isError) return <main>오류: {isError}</main>;

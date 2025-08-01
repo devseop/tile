@@ -1,10 +1,11 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /weather/{city}/districts/{district}/hourly/{hour}/data {
+    match /weather/{locationId}/hourly/{hour} {
       allow read: if true;
     }
-    match /locations/{city}/districts/{district} {
+
+    match /locations/{locationId} {
       allow read: if true;
     }
   }

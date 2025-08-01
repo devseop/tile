@@ -65,7 +65,7 @@ export const LocationSelectionPage = () => {
         disabled={!userCoords?.districtName}
         style={{ marginTop: "1rem", padding: "0.5rem 1rem" }}
       >
-        이 위치로 확인
+        확인
       </button>
     </div>
   );

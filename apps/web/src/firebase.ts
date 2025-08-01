@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
+import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
 import { getAnalytics, isSupported } from "firebase/analytics";
 
 const firebaseConfig = {
@@ -12,6 +12,16 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+
+// ⚠️ 반드시 connectFirestoreEmulator 전에 getFirestore(app)
+const firestore = getFirestore(app);
+
+if (import.meta.env.DEV) {
+  connectFirestoreEmulator(firestore, 'localhost', 8080);
+  console.log('✅ connected dev firestore');
+}
+
 const analytics = await isSupported().then((yes) => (yes ? getAnalytics(app) : null));
-export { app, db, analytics };
+
+// ⚠️ db가 connect 이후에 export 되어야 함
+export { app, firestore as db, analytics };
